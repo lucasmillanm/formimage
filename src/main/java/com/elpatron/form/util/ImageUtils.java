@@ -32,9 +32,9 @@ public class ImageUtils {
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length);
     byte[] tmp = new byte[4 * 1024];
     try {
-      while(!inflater.finished()) {
+      while (!inflater.finished()) {
         int count = inflater.inflate(tmp);
-        outputStream.write(tmp,0,count);
+        outputStream.write(tmp, 0, count);
       }
       outputStream.close();
     } catch (Exception ignored) {

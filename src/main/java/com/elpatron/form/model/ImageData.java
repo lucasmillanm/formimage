@@ -33,7 +33,7 @@ public class ImageData {
   private String type;
 
   @Lob
-  @Column(length = 1000)
+  @Column(length = 5000)
   private byte[] imageData;
 
 }

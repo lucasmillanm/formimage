@@ -18,7 +18,7 @@ import com.elpatron.form.service.StorageService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/store")
+@RequestMapping("/image")
 @RequiredArgsConstructor
 public class ImageController {
 
