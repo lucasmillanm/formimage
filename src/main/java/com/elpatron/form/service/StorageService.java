@@ -1,6 +1,8 @@
 package com.elpatron.form.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -26,6 +28,7 @@ public class StorageService {
     imageData.setName(file.getOriginalFilename());
     imageData.setType(file.getContentType());
     imageData.setImageData(imageUtils.compressImage(file.getBytes()));
+    log.info("saving image");
     ImageData saveImage = imageRepository.save(imageData);
     if (saveImage != null) {
       return "file uploaded: " + file.getOriginalFilename();
@@ -38,9 +41,22 @@ public class StorageService {
     if (dbImageData.isPresent()) {
       ImageUtils imageUtils = new ImageUtils();
       byte[] images = imageUtils.decompressImage(dbImageData.get().getImageData());
+      log.info("downloading image");
       return images;
     }
     return null;
+  }
+
+  public List<byte[]> downloadAllImages() {
+    List<ImageData> imageList = imageRepository.findAll();
+    List<byte[]> convertedList = new ArrayList<>();
+    for (var img: imageList) {
+        ImageUtils imageUtils = new ImageUtils();
+        byte[] image = imageUtils.decompressImage(img.getImageData());
+      convertedList.add(image);
+    }
+    log.info("downloading images");
+    return convertedList;
   }
 
 }
