@@ -22,41 +22,35 @@ public class StorageService {
 
   private final ImageRepository imageRepository;
 
-  public String uploadImage(MultipartFile file) throws IOException {
+  public String uploadImage(MultipartFile file) throws Exception {
     ImageUtils imageUtils = new ImageUtils();
     ImageData imageData = new ImageData();
-    imageData.setName(file.getOriginalFilename());
+    log.info("saving image");
+    if (imageRepository.existsByName(file.getOriginalFilename())) {
+      imageData.setName(file.getOriginalFilename() + " (1)");
+    } else {
+      imageData.setName(file.getOriginalFilename());
+    }
     imageData.setType(file.getContentType());
     imageData.setImageData(imageUtils.compressImage(file.getBytes()));
-    log.info("saving image");
     ImageData saveImage = imageRepository.save(imageData);
     if (saveImage != null) {
-      return "file uploaded: " + file.getOriginalFilename();
+      return imageData.getName();
+    } else {
+      throw new Exception("did not work");
     }
-    return null;
   }
 
   public byte[] downloadImage(String fileName) {
     Optional<ImageData> dbImageData = imageRepository.findByName(fileName);
     if (dbImageData.isPresent()) {
       ImageUtils imageUtils = new ImageUtils();
-      byte[] images = imageUtils.decompressImage(dbImageData.get().getImageData());
+      byte[] image = imageUtils.decompressImage(dbImageData.get().getImageData());
       log.info("downloading image");
-      return images;
+      return image;
+    } else {
+      return null;
     }
-    return null;
-  }
-
-  public List<byte[]> downloadAllImages() {
-    List<ImageData> imageList = imageRepository.findAll();
-    List<byte[]> convertedList = new ArrayList<>();
-    for (var img: imageList) {
-        ImageUtils imageUtils = new ImageUtils();
-        byte[] image = imageUtils.decompressImage(img.getImageData());
-      convertedList.add(image);
-    }
-    log.info("downloading images");
-    return convertedList;
   }
 
 }
