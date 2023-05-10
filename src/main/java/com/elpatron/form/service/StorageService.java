@@ -25,11 +25,13 @@ public class StorageService {
   public String uploadImage(MultipartFile file) throws Exception {
     ImageUtils imageUtils = new ImageUtils();
     ImageData imageData = new ImageData();
-    if (imageRepository.existsByName(file.getOriginalFilename())) {
-      imageData.setName(file.getOriginalFilename() + " (1)");
-    } else {
-      imageData.setName(file.getOriginalFilename());
+    String originalName = file.getOriginalFilename();
+    String newName = originalName;
+    int i = 1;
+    while (imageRepository.existsByName(newName)) {
+      newName = String.format("%s (%d)", originalName, i++);
     }
+    imageData.setName(newName);
     imageData.setType(file.getContentType());
     imageData.setImageData(imageUtils.compressImage(file.getBytes()));
     log.info("saving image {}", imageData.getName());
@@ -37,9 +39,10 @@ public class StorageService {
     if (saveImage != null) {
       return imageData.getName();
     } else {
-      throw new Exception("did not work");
+      throw new Exception("Unable to save the image.");
     }
   }
+
 
   public byte[] downloadImage(String fileName) {
     Optional<ImageData> dbImageData = imageRepository.findByName(fileName);
