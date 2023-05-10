@@ -25,13 +25,17 @@ public class ImageController {
   private final StorageService storageService;
 
   @PostMapping
-  public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile file) throws IOException {
+  public ResponseEntity<?> uploadImage(
+      @RequestParam("image") MultipartFile file
+  ) throws Exception {
     String uploadImage = storageService.uploadImage(file);
     return ResponseEntity.status(HttpStatus.OK).body(uploadImage);
   }
 
   @GetMapping("/{fileName}")
-  public ResponseEntity<?> downloadImage(@PathVariable String fileName) {
+  public ResponseEntity<?> downloadImage(
+      @PathVariable String fileName
+  ) {
     byte[] imageData = storageService.downloadImage(fileName);
     return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.valueOf("image/png")).body(imageData);
   }
