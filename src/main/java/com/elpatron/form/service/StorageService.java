@@ -25,7 +25,6 @@ public class StorageService {
   public String uploadImage(MultipartFile file) throws Exception {
     ImageUtils imageUtils = new ImageUtils();
     ImageData imageData = new ImageData();
-    log.info("saving image");
     if (imageRepository.existsByName(file.getOriginalFilename())) {
       imageData.setName(file.getOriginalFilename() + " (1)");
     } else {
@@ -33,6 +32,7 @@ public class StorageService {
     }
     imageData.setType(file.getContentType());
     imageData.setImageData(imageUtils.compressImage(file.getBytes()));
+    log.info("saving image {}", imageData.getName());
     ImageData saveImage = imageRepository.save(imageData);
     if (saveImage != null) {
       return imageData.getName();
@@ -46,7 +46,7 @@ public class StorageService {
     if (dbImageData.isPresent()) {
       ImageUtils imageUtils = new ImageUtils();
       byte[] image = imageUtils.decompressImage(dbImageData.get().getImageData());
-      log.info("downloading image");
+      log.info("downloading image {}", fileName);
       return image;
     } else {
       return null;
