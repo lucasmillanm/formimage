@@ -11,4 +11,6 @@ import com.elpatron.form.model.ImageData;
 public interface ImageRepository extends JpaRepository<ImageData, Long> {
 
   Optional<ImageData> findByName(String fileName);
+
+  boolean existsByName(String fileName);
 }
